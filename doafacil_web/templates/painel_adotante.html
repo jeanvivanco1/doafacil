@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Painel do Adotante{% endblock %}
+
+{% block content %}
+<div class="container dashboard">
+    <div class="dashboard-header">
+        <h1>Meu Painel (Adotante/Receptor)</h1>
+        <a href="{{ url_for('categorias') }}" class="btn btn-primary">Procurar Doações</a>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="dashboard-section">
+            <h2>Meus Favoritos</h2>
+            {% if favoritos %}
+            <div class="fav-mini-list">
+                {% for f in favoritos %}
+                <div class="mini-card">
+                    <img src="{{ url_for('static', filename='uploads/' + f.doacao.imagem) if f.doacao.imagem else 'https://via.placeholder.com/50' }}" alt="">
+                    <div>
+                        <h4>{{ f.doacao.titulo }}</h4>
+                        <a href="{{ url_for('detalhes_doacao', doacao_id=f.doacao.id) }}">Ver Detalhes</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('favoritos') }}" class="btn-link">Ver todos os favoritos</a>
+            {% else %}
+            <p>Você ainda não favoritou nada.</p>
+            {% endif %}
+        </section>
+
+        <section class="dashboard-section">
+            <h2>Minhas Solicitações</h2>
+            {% if solicitacoes %}
+            <div class="requests-mini-list">
+                {% for s in solicitacoes %}
+                <div class="mini-card">
+                    <div>
+                        <h4>{{ s.doacao.titulo }}</h4>
+                        <p>Status: <span class="status-badge {{ s.status.lower() }}">{{ s.status }}</span></p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ url_for('minhas_solicitacoes') }}" class="btn-link">Ver histórico completo</a>
+            {% else %}
+            <p>Você ainda não fez nenhuma solicitação.</p>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock %}

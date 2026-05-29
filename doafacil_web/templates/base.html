@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoaFácil - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="{{ url_for('index') }}" class="logo">
+                    <i class="fas fa-hand-holding-heart"></i> DoaFácil
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="{{ url_for('index') }}">Início</a></li>
+                    <li class="dropdown">
+                        <a href="{{ url_for('categorias') }}" class="dropbtn">Categorias <i class="fas fa-chevron-down"></i></a>
+                        <div class="dropdown-content">
+                            {% for cat in todas_categorias_global %}
+                            <div class="dropdown-submenu">
+                                <a href="{{ url_for('categoria_detalhe', cat_id=cat.id) }}" class="cat-title">{{ cat.nome }}</a>
+                                <div class="sub-items">
+                                    {% for sub in cat.subcategorias %}
+                                    <a href="{{ url_for('busca', categoria=cat.id, subcategoria=sub.id) }}">{{ sub.nome }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </li>
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.tipo_perfil == 'Doador' %}
+                            <li><a href="{{ url_for('nova_doacao') }}" class="btn-donate">Quero Doar</a></li>
+                            <li><a href="{{ url_for('painel_doador') }}">Painel</a></li>
+                        {% elif current_user.tipo_perfil == 'Admin' %}
+                            <li><a href="{{ url_for('painel_admin') }}">Painel Admin</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('painel_adotante') }}">Painel</a></li>
+                        {% endif %}
+                        <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('login') }}">Entrar</a></li>
+                        <li><a href="{{ url_for('cadastro') }}" class="btn-register">Cadastrar</a></li>
+                    {% endif %}
+                    <li>
+                        <button id="theme-toggle" class="theme-btn">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="container">
+                {% for message in messages %}
+                  <div class="alert">{{ message }}</div>
+                {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-info">
+                <h3>DoaFácil</h3>
+                <p>Conectando quem quer ajudar com quem precisa.</p>
+            </div>
+            <div class="footer-links">
+                <a href="{{ url_for('sobre') }}">Sobre nós</a>
+                <a href="{{ url_for('como_funciona') }}">Como funciona</a>
+                <a href="{{ url_for('privacidade') }}">Privacidade</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DoaFácil. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

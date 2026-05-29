@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Meus Favoritos{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Meus Favoritos</h1>
+    </div>
+    {% if favoritos %}
+    <div class="listings-grid">
+        {% for f in favoritos %}
+        <div class="card">
+            <div class="card-image">
+                <img src="{{ url_for('static', filename='uploads/' + f.doacao.imagem) if f.doacao.imagem else 'https://via.placeholder.com/300x200' }}" alt="">
+            </div>
+            <div class="card-content">
+                <h3>{{ f.doacao.titulo }}</h3>
+                <p>{{ f.doacao.cidade }}</p>
+                <div class="card-actions">
+                    <a href="{{ url_for('detalhes_doacao', doacao_id=f.doacao.id) }}" class="btn btn-small">Ver</a>
+                    <a href="{{ url_for('favoritar', doacao_id=f.doacao.id) }}" class="btn-fav active"><i class="fas fa-heart"></i></a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center">Você ainda não favoritou nenhuma doação.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Publicar Doação{% endblock %}
+
+{% block content %}
+<div class="container form-container">
+    <div class="auth-card large">
+        <h1>O que você quer doar?</h1>
+        <p>Preencha os dados abaixo para publicar seu anúncio.</p>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="titulo">Título do Anúncio</label>
+                <input type="text" name="titulo" id="titulo" required placeholder="Ex: Cadeira de Rodas, Cesta Básica, Gatinho para adoção">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="categoria">Categoria</label>
+                    <select name="categoria" id="categoria" required onchange="updateSubcategories()">
+                        <option value="">Selecione</option>
+                        {% for cat in categorias %}
+                        <option value="{{ cat.id }}">{{ cat.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="subcategoria">Subcategoria</label>
+                    <select name="subcategoria" id="subcategoria" required>
+                        <option value="">Selecione a categoria primeiro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="descricao">Descrição Completa</label>
+                <textarea name="descricao" id="descricao" rows="4" required placeholder="Conte mais sobre o que está doando..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" name="cidade" id="cidade" required value="{{ current_user.cidade }}">
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" name="bairro" id="bairro" required value="{{ current_user.bairro }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="whatsapp">WhatsApp para Contato</label>
+                    <input type="text" name="whatsapp" id="whatsapp" required value="{{ current_user.telefone }}">
+                </div>
+                <div class="form-group">
+                    <label for="condicao">Condição do Item</label>
+                    <select name="condicao" id="condicao">
+                        <option value="Novo">Novo</option>
+                        <option value="Usado - Ótimo estado">Usado - Ótimo estado</option>
+                        <option value="Usado - Marcas de uso">Usado - Marcas de uso</option>
+                        <option value="Não se aplica">Não se aplica (Alimentos/Pets)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="imagem">Foto do Item/Pet</label>
+                <input type="file" name="imagem" id="imagem" accept="image/*">
+            </div>
+
+            <!-- Campos Extras para Pets -->
+            <div id="pet-fields" style="display:none;" class="extra-fields">
+                <h3>Informações do Pet</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome_pet">Nome do Pet</label>
+                        <input type="text" name="nome_pet" id="nome_pet">
+                    </div>
+                    <div class="form-group">
+                        <label for="especie">Espécie</label>
+                        <select name="especie" id="especie">
+                            <option value="Cachorro">Cachorro</option>
+                            <option value="Gato">Gato</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="raca">Raça</label>
+                        <input type="text" name="raca" id="raca">
+                    </div>
+                    <div class="form-group">
+                        <label for="sexo">Sexo</label>
+                        <select name="sexo" id="sexo">
+                            <option value="Macho">Macho</option>
+                            <option value="Fêmea">Fêmea</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="idade">Idade Aproximada</label>
+                        <input type="text" name="idade" id="idade">
+                    </div>
+                    <div class="form-group">
+                        <label for="porte">Porte</label>
+                        <select name="porte" id="porte">
+                            <option value="Pequeno">Pequeno</option>
+                            <option value="Médio">Médio</option>
+                            <option value="Grande">Grande</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vacinado">Vacinado?</label>
+                        <select name="vacinado" id="vacinado">
+                            <option value="Sim">Sim</option>
+                            <option value="Não">Não</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="castrado">Castrado?</label>
+                        <select name="castrado" id="castrado">
+                            <option value="Sim">Sim</option>
+                            <option value="Não">Não</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">Publicar Agora</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const subcats = {
+    {% for cat in categorias %}
+    "{{ cat.id }}": [
+        {% for sub in cat.subcategorias %}
+        {"id": "{{ sub.id }}", "nome": "{{ sub.nome }}"},
+        {% endfor %}
+    ],
+    {% endfor %}
+};
+
+function updateSubcategories() {
+    const catId = document.getElementById('categoria').value;
+    const subSelect = document.getElementById('subcategoria');
+    const petFields = document.getElementById('pet-fields');
+    
+    subSelect.innerHTML = '<option value="">Selecione</option>';
+    
+    if (catId && subcats[catId]) {
+        subcats[catId].forEach(sub => {
+            subSelect.innerHTML += `<option value="${sub.id}">${sub.nome}</option>`;
+        });
+    }
+
+    // Mostrar campos de pet se a categoria for 'Pets' (ID 1 no seed)
+    // No seed real, pegamos pelo nome se possível, mas aqui usamos o ID
+    const catText = document.getElementById('categoria').options[document.getElementById('categoria').selectedIndex].text;
+    petFields.style.display = catText === 'Pets' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

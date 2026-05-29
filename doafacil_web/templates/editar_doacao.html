@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Editar Doação{% endblock %}
+{% block content %}
+<div class="container form-container">
+    <div class="auth-card">
+        <h1>Editar Anúncio</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" name="titulo" value="{{ doacao.titulo }}" required>
+            </div>
+            <div class="form-group">
+                <label>Descrição</label>
+                <textarea name="descricao" rows="4" required>{{ doacao.descricao }}</textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" name="cidade" value="{{ doacao.cidade }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Bairro</label>
+                    <input type="text" name="bairro" value="{{ doacao.bairro }}" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Status do Anúncio</label>
+                <p class="form-help">Mude para 'Reservado' se alguém estiver vindo buscar, ou 'Doado' quando a entrega for concluída.</p>
+                <select name="status" class="status-select">
+                    <option value="Disponível" {% if doacao.status == 'Disponível' %}selected{% endif %}>🟢 Disponível</option>
+                    <option value="Reservado" {% if doacao.status == 'Reservado' %}selected{% endif %}>🟡 Reservado</option>
+                    <option value="Doado" {% if doacao.status == 'Doado' %}selected{% endif %}>⚪ Doado</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Salvar Alterações</button>
+            <a href="{{ url_for('painel_doador') }}" class="btn btn-link btn-full">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

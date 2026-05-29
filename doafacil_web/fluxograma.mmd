@@ -1,0 +1,29 @@
+graph TD
+    A[Início / Landing Page] --> B{Usuário Logado?}
+    B -- Não --> C[Login / Cadastro]
+    B -- Sim --> D[Página Inicial / Feed]
+    
+    C --> D
+    
+    D --> E[Navegar por Categorias]
+    D --> F[Busca por Título/Cidade]
+    
+    E --> G[Ver Detalhes da Doação]
+    F --> G
+    
+    G --> H{Tipo de Perfil?}
+    H -- Adotante --> I[Solicitar Doação / Favoritar]
+    H -- Doador --> J[Editar / Deletar Própria Doação]
+    
+    I --> K[Painel do Adotante]
+    J --> L[Painel do Doador]
+    
+    L --> M[Gerenciar Solicitações Recebidas]
+    M --> N[Aceitar / Recusar Solicitação]
+    
+    O[Admin] --> P[Painel Administrativo]
+    P --> Q[Gerenciar Todos Usuários]
+    P --> R[Gerenciar Todas Doações]
+    
+    style O fill:#f96,stroke:#333,stroke-width:2px
+    style P fill:#f96,stroke:#333,stroke-width:2px

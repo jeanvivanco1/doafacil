@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Minhas Solicitações{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Minhas Solicitações Enviadas</h1>
+    </div>
+    {% if solicitacoes %}
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Doação</th>
+                    <th>Doador</th>
+                    <th>Data</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in solicitacoes %}
+                <tr>
+                    <td><a href="{{ url_for('detalhes_doacao', doacao_id=s.doacao.id) }}">{{ s.doacao.titulo }}</a></td>
+                    <td>{{ s.doacao.doador.nome }}</td>
+                    <td>{{ s.data_solicitacao.strftime('%d/%m/%Y') }}</td>
+                    <td><span class="status-badge {{ s.status.lower() }}">{{ s.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-center">Você ainda não enviou nenhuma solicitação.</p>
+    {% endif %}
+</div>
+{% endblock %}

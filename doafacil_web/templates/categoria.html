@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ categoria.nome if categoria else 'Resultados da Busca' }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header-simple">
+        <h1 class="section-title-left">{{ categoria.nome if categoria else 'Resultados da Busca' }}</h1>
+        {% if q %}
+        <p class="text-muted">Mostrando resultados para: "<strong>{{ q }}</strong>"</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    {% if doacoes %}
+    <div class="listings-grid">
+        {% for doacao in doacoes %}
+        <div class="card">
+            <div class="card-image">
+                {% if doacao.imagem %}
+                    {% if doacao.imagem.startswith('http') %}
+                    <img src="{{ doacao.imagem }}" alt="{{ doacao.titulo }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='uploads/' + doacao.imagem) }}" alt="{{ doacao.titulo }}">
+                    {% endif %}
+                {% else %}
+                <img src="https://via.placeholder.com/300x200?text=Sem+Imagem" alt="Sem Imagem">
+                {% endif %}
+                <span class="status-badge {{ doacao.status.lower() }}">{{ doacao.status }}</span>
+            </div>
+            <div class="card-content">
+                <span class="card-category">{{ doacao.categoria.nome }}</span>
+                <h3>{{ doacao.titulo }}</h3>
+                <p class="card-location"><i class="fas fa-map-marker-alt"></i> {{ doacao.bairro }}, {{ doacao.cidade }}</p>
+                <div class="card-footer">
+                    <span class="donor-name">Por: {{ doacao.doador.nome }}</span>
+                    <div class="card-actions">
+                        <a href="{{ url_for('favoritar', doacao_id=doacao.id) }}" class="btn-fav"><i class="far fa-heart"></i></a>
+                        <a href="{{ url_for('detalhes_doacao', doacao_id=doacao.id) }}" class="btn btn-small">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-results-card">
+        <div class="no-results-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h3>Ops! Nada por aqui.</h3>
+        <p>Ainda não temos doações disponíveis nesta categoria.</p>
+        <a href="{{ url_for('categorias') }}" class="btn btn-primary">Explorar Categorias</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

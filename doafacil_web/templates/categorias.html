@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block content %}
+<div class="container page-header">
+    <h1>Navegar por Categorias</h1>
+    <p>Escolha uma categoria para ver as doações disponíveis.</p>
+</div>
+
+<div class="container">
+    <div class="category-list-grid">
+        {% for cat in categorias %}
+        <div class="category-list-card">
+            <div class="category-list-header">
+                {% if cat.nome == 'Pets' %}<i class="fas fa-paw"></i>
+                {% elif cat.nome == 'Alimentos' %}<i class="fas fa-utensils"></i>
+                {% elif cat.nome == 'Vestuário' %}<i class="fas fa-tshirt"></i>
+                {% elif cat.nome == 'Casa' %}<i class="fas fa-home"></i>
+                {% elif cat.nome == 'Higiene' %}<i class="fas fa-soap"></i>
+                {% else %}<i class="fas fa-box"></i>{% endif %}
+                <h2>{{ cat.nome }}</h2>
+            </div>
+            <ul class="subcategory-list">
+                {% for sub in cat.subcategorias %}
+                <li><a href="{{ url_for('busca', categoria=cat.id, subcategoria=sub.id) }}">{{ sub.nome }}</a></li>
+                {% endfor %}
+            </ul>
+            <a href="{{ url_for('categoria_detalhe', cat_id=cat.id) }}" class="btn-link">Ver tudo em {{ cat.nome }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

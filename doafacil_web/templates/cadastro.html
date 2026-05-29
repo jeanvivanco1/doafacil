@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<div class="container auth-container">
+    <div class="auth-card large">
+        <h2>Criar conta</h2>
+        <p>Junte-se à nossa comunidade de solidariedade.</p>
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nome">Nome completo ou Instituição</label>
+                    <input type="text" name="nome" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" name="email" id="email" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" name="senha" id="senha" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefone">WhatsApp</label>
+                    <input type="text" name="telefone" id="telefone" required placeholder="(00) 00000-0000">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" name="cidade" id="cidade" required>
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro</label>
+                    <input type="text" name="bairro" id="bairro" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo_perfil">Tipo de Perfil</label>
+                    <select name="tipo_perfil" id="tipo_perfil" required onchange="toggleDoadorFields()">
+                        <option value="Adotante">Quero receber doações / Adotar</option>
+                        <option value="Doador">Quero doar itens / animais</option>
+                    </select>
+                </div>
+                <div class="form-group" id="tipo_doador_group" style="display:none;">
+                    <label for="tipo_doador">Tipo de Doador</label>
+                    <select name="tipo_doador" id="tipo_doador">
+                        <option value="Pessoa Física">Pessoa Física</option>
+                        <option value="Instituição">Instituição / ONG</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Criar Conta</button>
+        </form>
+        <p class="auth-footer">Já tem uma conta? <a href="{{ url_for('login') }}">Entrar</a></p>
+    </div>
+</div>
+
+<script>
+function toggleDoadorFields() {
+    const tipo = document.getElementById('tipo_perfil').value;
+    const group = document.getElementById('tipo_doador_group');
+    group.style.display = tipo === 'Doador' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

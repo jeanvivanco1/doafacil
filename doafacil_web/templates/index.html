@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Início{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container hero-container">
+        <div class="hero-text">
+            <h1>Ajude quem está perto de você.</h1>
+            <p>Doe itens, encontre ajuda e transforme vidas com pequenos gestos.</p>
+            <div class="hero-actions">
+                <a href="{{ url_for('nova_doacao') }}" class="btn btn-primary">Quero Doar</a>
+                <a href="{{ url_for('categorias') }}" class="btn btn-secondary">Encontrar Doações</a>
+            </div>
+        </div>
+        <div class="hero-search">
+            <form action="{{ url_for('busca') }}" method="GET" class="search-form">
+                <input type="text" name="q" placeholder="O que você procura?">
+                <input type="text" name="cidade" placeholder="Cidade">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="quick-categories container">
+    <h2 class="section-title">Categorias Populares</h2>
+    <div class="category-grid">
+        {% for cat in categorias %}
+        <a href="{{ url_for('categoria_detalhe', cat_id=cat.id) }}" class="category-card-mini">
+            <div class="cat-icon-box">
+                {% if cat.nome == 'Pets' %}<i class="fas fa-paw"></i>
+                {% elif cat.nome == 'Alimentos' %}<i class="fas fa-utensils"></i>
+                {% elif cat.nome == 'Vestuário' %}<i class="fas fa-tshirt"></i>
+                {% elif cat.nome == 'Casa' %}<i class="fas fa-home"></i>
+                {% elif cat.nome == 'Higiene' %}<i class="fas fa-soap"></i>
+                {% else %}<i class="fas fa-box"></i>{% endif %}
+            </div>
+            <span>{{ cat.nome }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="recent-donations container">
+    <div class="section-header">
+        <h2 class="section-title-left">Doações Recentes</h2>
+        <a href="{{ url_for('categorias') }}" class="btn-link">Ver todas <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="listings-grid">
+        {% for doacao in recentes %}
+        <div class="card">
+            <div class="card-image">
+                {% if doacao.imagem %}
+                    {% if doacao.imagem.startswith('http') %}
+                    <img src="{{ doacao.imagem }}" alt="{{ doacao.titulo }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='uploads/' + doacao.imagem) }}" alt="{{ doacao.titulo }}">
+                    {% endif %}
+                {% else %}
+                <img src="https://via.placeholder.com/300x200?text=Sem+Imagem" alt="Sem Imagem">
+                {% endif %}
+                <span class="status-badge {{ doacao.status.lower() }}">{{ doacao.status }}</span>
+            </div>
+            <div class="card-content">
+                <span class="card-category">{{ doacao.categoria.nome }}</span>
+                <h3>{{ doacao.titulo }}</h3>
+                <p class="card-location"><i class="fas fa-map-marker-alt"></i> {{ doacao.bairro }}, {{ doacao.cidade }}</p>
+                <div class="card-footer">
+                    <span class="donor-name">Por: {{ doacao.doador.nome }}</span>
+                    <div class="card-actions">
+                        <a href="{{ url_for('favoritar', doacao_id=doacao.id) }}" class="btn-fav"><i class="far fa-heart"></i></a>
+                        <a href="{{ url_for('detalhes_doacao', doacao_id=doacao.id) }}" class="btn btn-small">Ver Detalhes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="how-it-works bg-light">
+    <div class="container">
+        <h2 class="text-center">Como Funciona</h2>
+        <div class="steps-grid">
+            <div class="step">
+                <i class="fas fa-user-plus"></i>
+                <h3>Crie sua conta</h3>
+                <p>Cadastre-se como doador ou adotante em poucos segundos.</p>
+            </div>
+            <div class="step">
+                <i class="fas fa-bullhorn"></i>
+                <h3>Anuncie ou Busque</h3>
+                <p>Publique itens para doação ou encontre o que você precisa perto de você.</p>
+            </div>
+            <div class="step">
+                <i class="fas fa-comments"></i>
+                <h3>Combine a entrega</h3>
+                <p>Converse pelo WhatsApp e combine a retirada de forma segura.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

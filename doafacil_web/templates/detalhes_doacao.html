@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ doacao.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container detail-container">
+    <div class="detail-grid">
+        <div class="detail-image">
+            {% if doacao.imagem %}
+                {% if doacao.imagem.startswith('http') %}
+                <img src="{{ doacao.imagem }}" alt="{{ doacao.titulo }}">
+                {% else %}
+                <img src="{{ url_for('static', filename='uploads/' + doacao.imagem) }}" alt="{{ doacao.titulo }}">
+                {% endif %}
+            {% else %}
+            <img src="https://via.placeholder.com/600x400?text=Sem+Imagem" alt="Sem Imagem">
+            {% endif %}
+        </div>
+        
+        <div class="detail-info">
+            <div class="detail-header">
+                <span class="status-badge {{ doacao.status.lower() }}">{{ doacao.status }}</span>
+                <h1>{{ doacao.titulo }}</h1>
+                <p class="category-path">{{ doacao.categoria.nome }} > {{ doacao.subcategoria.nome }}</p>
+            </div>
+            
+            <div class="detail-meta">
+                <p><i class="fas fa-map-marker-alt"></i> {{ doacao.bairro }}, {{ doacao.cidade }}</p>
+                <p><i class="fas fa-calendar-alt"></i> Publicado em {{ doacao.data_criacao.strftime('%d/%m/%Y') }}</p>
+                {% if doacao.condicao %}
+                <p><i class="fas fa-info-circle"></i> Condição: {{ doacao.condicao }}</p>
+                {% endif %}
+            </div>
+
+            <div class="detail-description">
+                <h3>Descrição</h3>
+                <p>{{ doacao.descricao }}</p>
+            </div>
+
+            {% if doacao.pet_detalhes %}
+            <div class="pet-info-box">
+                <h3>Informações do Pet</h3>
+                <div class="pet-specs">
+                    <p><strong>Nome:</strong> {{ doacao.pet_detalhes.nome_pet }}</p>
+                    <p><strong>Espécie:</strong> {{ doacao.pet_detalhes.especie }}</p>
+                    <p><strong>Raça:</strong> {{ doacao.pet_detalhes.raca }}</p>
+                    <p><strong>Sexo:</strong> {{ doacao.pet_detalhes.sexo }}</p>
+                    <p><strong>Idade:</strong> {{ doacao.pet_detalhes.idade }}</p>
+                    <p><strong>Porte:</strong> {{ doacao.pet_detalhes.porte }}</p>
+                    <p><strong>Vacinado:</strong> {{ doacao.pet_detalhes.vacinado }}</p>
+                    <p><strong>Castrado:</strong> {{ doacao.pet_detalhes.castrado }}</p>
+                </div>
+                {% if doacao.pet_detalhes.comportamento %}
+                <p><strong>Comportamento:</strong> {{ doacao.pet_detalhes.comportamento }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="donor-box">
+                <div class="donor-profile">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <h4>{{ doacao.doador.nome }}</h4>
+                        <p>{{ doacao.doador.tipo_doador or 'Doador' }}</p>
+                    </div>
+                </div>
+                <div class="detail-actions">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.id != doacao.doador_id %}
+                            <a href="{{ url_for('solicitar_doacao', doacao_id=doacao.id) }}" class="btn btn-primary btn-full">
+                                {{ 'Tenho Interesse' if doacao.categoria.nome == 'Pets' else 'Solicitar Doação' }}
+                            </a>
+                            <a href="https://wa.me/{{ doacao.whatsapp }}?text=Olá, vi seu anúncio '{{ doacao.titulo }}' no DoaFácil e tenho interesse." 
+                               target="_blank" class="btn btn-whatsapp btn-full">
+                                <i class="fab fa-whatsapp"></i> Entrar em Contato
+                            </a>
+                            <a href="{{ url_for('favoritar', doacao_id=doacao.id) }}" class="btn btn-outline btn-full">
+                                <i class="{{ 'fas' if favoritado else 'far' }} fa-heart"></i> {{ 'Remover dos Favoritos' if favoritado else 'Adicionar aos Favoritos' }}
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('editar_doacao', id=doacao.id) }}" class="btn btn-secondary btn-full">Editar Anúncio</a>
+                        {% endif %}
+                    {% else %}
+                        <p class="login-alert">Para solicitar esta doação, <a href="{{ url_for('login') }}">faça login</a>.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

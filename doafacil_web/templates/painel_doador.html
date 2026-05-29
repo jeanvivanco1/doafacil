@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Painel do Doador{% endblock %}
+
+{% block content %}
+<div class="container dashboard">
+    <div class="dashboard-header">
+        <h1>Meu Painel (Doador)</h1>
+        <a href="{{ url_for('nova_doacao') }}" class="btn btn-primary">Nova Doação</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Disponíveis</h3>
+            <p>{{ doacoes|selectattr('status', 'equalto', 'Disponível')|list|length }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Reservados</h3>
+            <p>{{ doacoes|selectattr('status', 'equalto', 'Reservado')|list|length }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Doados</h3>
+            <p>{{ doacoes|selectattr('status', 'equalto', 'Doado')|list|length }}</p>
+        </div>
+    </div>
+
+    <section class="dashboard-section">
+        <h2>Minhas Doações</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Categoria</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in doacoes %}
+                    <tr>
+                        <td>{{ d.titulo }}</td>
+                        <td>{{ d.categoria.nome }}</td>
+                        <td><span class="status-badge {{ d.status.lower() }}">{{ d.status }}</span></td>
+                        <td>
+                            <a href="{{ url_for('editar_doacao', id=d.id) }}" class="btn-icon"><i class="fas fa-edit"></i></a>
+                            <a href="{{ url_for('deletar_doacao', id=d.id) }}" class="btn-icon delete" onclick="return confirm('Excluir?')"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="dashboard-section">
+        <h2>Solicitações Recebidas</h2>
+        {% if solicitacoes %}
+        <div class="requests-list">
+            {% for s in solicitacoes %}
+            <div class="request-card">
+                <div class="request-info">
+                    <h4>{{ s.solicitante.nome }} tem interesse em "{{ s.doacao.titulo }}"</h4>
+                    <p><strong>Mensagem:</strong> {{ s.mensagem }}</p>
+                    <p><strong>Motivo:</strong> {{ s.motivo }}</p>
+                    <p><strong>WhatsApp:</strong> {{ s.telefone_contato }}</p>
+                    <span class="status-badge {{ s.status.lower() }}">{{ s.status }}</span>
+                </div>
+                {% if s.status == 'Pendente' %}
+                <div class="request-actions">
+                    <a href="{{ url_for('responder_solicitacao', id=s.id, acao='aceitar') }}" class="btn btn-small btn-primary">Aceitar</a>
+                    <a href="{{ url_for('responder_solicitacao', id=s.id, acao='recusar') }}" class="btn btn-small btn-danger">Recusar</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>Nenhuma solicitação recebida ainda.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
